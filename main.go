@@ -2,24 +2,36 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"bytes"
 	"os/exec"
 )
 
+func download(URL string) (string, error) {
+  toolName := "yt-dlp"
+  cmd := exec.Command(toolName, "-g", "-f", "best[ext=mp4]/best", URL)
+
+  var out bytes.Buffer
+  cmd.Stdout = &out
+
+  err := cmd.Run()
+  if err == nil && out.Len() > 0 {
+    return strings.TrimSpace(out.String()), err
+  }
+
+  cmd = exec.Command("gallery-dl", "-g", URL)
+  out.Reset()
+  cmd.Stdout = &out
+
+  err = cmd.Run()
+  if err != nil {
+    return " ", err
+  }
+ return strings.TrimSpace(out.String()), err
+}
+
 func main() {
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	URL := "Your url link" // define a func for toolName
-	cmd := exec.Command(toolName, URL) // "-g", "-f", "-o", "-d" 
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
-
-	if err != nil {
-		fmt.Println("Error Output: " + stderr.String())
-		fmt.Println("Execution Error: " + err.Error())
-	} else {
-		fmt.Println("Successfully Uploaded.." + out.String())
-	}
+	URL := "Your MMS Link"
+	a, b := download(URL)
+	fmt.Print(a, b)
 }
