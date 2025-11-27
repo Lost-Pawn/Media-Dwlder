@@ -9,7 +9,7 @@ import (
 
 func download(URL string) (string, error) {
   toolName := "yt-dlp"
-  cmd := exec.Command(toolName, "-g", "-f", "best[ext=mp4]/best", URL)
+  cmd := exec.Command(toolName, "-g", "-f", "best[ext=mp4]/best", URL) // first tool
 
   var out bytes.Buffer
   cmd.Stdout = &out
@@ -19,9 +19,9 @@ func download(URL string) (string, error) {
     return strings.TrimSpace(out.String()), err
   }
 
-  cmd = exec.Command("gallery-dl", "-g", URL)
-  out.Reset()
-  cmd.Stdout = &out
+  cmd = exec.Command("gallery-dl", "-g", URL) // second tool
+  out.Reset() // resets stored output
+  cmd.Stdout = &out 
 
   err = cmd.Run()
   if err != nil {
@@ -31,7 +31,7 @@ func download(URL string) (string, error) {
 }
 
 func main() {
-	URL := "Your MMS Link"
+	URL := "Your Link"
 	a, b := download(URL)
-	fmt.Print(a, b)
+	fmt.Print(a, b) // returns output, err
 }
