@@ -7,19 +7,19 @@ import (
 	"os/exec"
 )
 
-func download(URL string) (string, error) {
+func Download(url string) (string, error) {
   toolName := "yt-dlp"
-  cmd := exec.Command(toolName, "-g", "-f", "best[ext=mp4]/best", URL) // first tool
+  cmd := exec.Command(toolName, "-g", "-f", "best[ext=mp4]/best", url) // first tool
 
   var out bytes.Buffer
   cmd.Stdout = &out
 
   err := cmd.Run()
   if err == nil && out.Len() > 0 {
-    return strings.TrimSpace(out.String()), err
+    return strings.TrimSpace(out.String()), nil
   }
 
-  cmd = exec.Command("gallery-dl", "-g", URL) // second tool
+  cmd = exec.Command("gallery-dl", "-g", url) // second tool
   out.Reset() // resets stored output
   cmd.Stdout = &out 
 
@@ -27,11 +27,11 @@ func download(URL string) (string, error) {
   if err != nil {
     return " ", err
   }
- return strings.TrimSpace(out.String()), err
+ return strings.TrimSpace(out.String()), nil
 }
 
-func main() {
-	URL := "Your Link"
-	a, b := download(URL)
+func Main() {
+	url := "Your Link"
+	a, b := Download(url)
 	fmt.Print(a, b) // returns output, err
 }

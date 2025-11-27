@@ -1,0 +1,18 @@
+# --- Security ---
+.env
+
+# --- Go Build Artifacts ---
+# Binaries for all OS
+*.exe
+*.dll
+*.so
+*.dylib
+
+# If your main file is named main.go, the binary is often named 'main'
+main
+
+# Test binaries
+*.test
+
+# Module download cache (optional but good)
+vendor/
