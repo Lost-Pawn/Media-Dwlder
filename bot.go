@@ -41,44 +41,80 @@ func main() {
 		msg := &tele.Chat{ID: chatID} // stores chatid
 	    bot.Send(msg, "Downloading your media...")
 
-		result, err := Download(url)
+		result, err := Download(url) // stores url in result
 		if err != nil {
 			bot.Send(msg, "Failed to download your media.")
 			return err
 		}
-		fileName := fmt.Sprintf("media_%d", time.Now().Unix())
+		fileName := fmt.Sprintf("media_%d", time.Now().Unix()) // formats a path file
 		
-		out, err := os.Create(fileName)
+		out, err := os.Create(fileName) // creates
 		if err != nil {
 			bot.Send(msg, "Failed to create file.")
 			return err
 		}
 		
-		defer out.Close()
+		defer out.Close() // on hold, closes
 		// Downdloading via http 
-		response, err := http.Get(result)
+		response, err := http.Get(result) // downloads result from url
 		if err != nil {
 			bot.Send(msg, "Failed to save media file.")
 			return err
 		}
 		
-		defer response.Body.Close()
-		_, err = io.Copy(out, response.Body)
+		defer response.Body.Close() // holds body = result, closes
+		_, err = io.Copy(out, response.Body) // keeps the result inside a file
 		if err != nil {
 			bot.Send(msg, "Failed to Downlaod.")
 			return err
 		}
 
 		// Send actual media file
-    	_, err = bot.Send(msg, &tele.Document{File: tele.FromDisk(fileName)})
+    	_, err = bot.Send(msg, &tele.Document{File: tele.FromDisk(fileName)}) // sends file
     	if err != nil {
         	bot.Send(msg, "Failed to send media file.")
         	return err
     	}
 
-		os.Remove(fileName)
+		os.Remove(fileName) // removes file
 		return nil
 	}) 
 
-	
+bot.Handle(tele.OnQuery, func(c tele.Context) error {
+    query := c.Query().Text // @bot <query>
+
+    if query == "" {
+        return c.Answer(&tele.QueryResponse{
+            Results:  []tele.Result{},
+            CacheTime: 0,
+        })
+    }
+
+    directURL, err := Download(query) // fetches
+    if err != nil {
+        return c.Answer(&tele.QueryResponse{
+            Results:  []tele.Result{},
+            CacheTime: 0,
+        })
+    }
+
+    // ---- FALLBACK TEXT OPTION ----
+    article := &tele.ArticleResult{
+        Title:       "Direct Download Link",
+        Description: "Tap to copy the original URL",
+        Text:        directURL,
+        HideURL:     true,
+    }
+    article.SetResultID("4")
+
+    // FIX: results must be a tele.Results (slice of tele.Result)
+    var results tele.Results
+    results = append(results, article) // appends article format in result = NONE
+
+    return c.Answer(&tele.QueryResponse{
+        Results:  results,
+        CacheTime: 0,
+    })
+})
 }
+		
