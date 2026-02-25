@@ -49,4 +49,5 @@ Select the result and send it directly in the chat.
 ---
 
 Note: 1. Supported platforms depend on yt-dlp and gallery-dl compatibility.
-      2. Deliverables size must be under 25-50mb as the source uses gv3
+
+      2. Deliverables size must be under 25-50mb as the source uses "gopkg.in/telebot.v3"
